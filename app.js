@@ -1,16 +1,16 @@
 // Book Constructor
-function Book(title, author, isbn){
+function Book(title, author, isbn) {
     this.title = title;
     this.author = author;
     this.isbn = isbn;
 }
 
 // UI Constructor 
-function UI(){
+function UI() {
 
 }
 // UI prototype methods 
-UI.prototype.addBookToList = function(book){
+UI.prototype.addBookToList = function (book) {
     const list = document.getElementById('book-list');
     // Create tr element
     const row = document.createElement('tr');
@@ -26,31 +26,65 @@ UI.prototype.addBookToList = function(book){
     console.log(row);
 }
 
-UI.prototype.clearFields = function(){
+UI.prototype.showAlert = function(message, className){
+    // construct element
+    // Create a div
+    const div = document.createElement('div');
+    // Add classes
+    div.className = `alert ${className}`;
+    // Add text
+    div.appendChild(document.createTextNode(message));
+    
+
+    // Insert into DOM
+    // Get parent
+    const container = document.querySelector('.container');
+    const form = document.querySelector('#book-form');
+    // Insert alert
+    container.insertBefore(div, form);
+    // Disappear after 3 sec
+    setTimeout(function(){
+        document.querySelector('.alert').remove();
+    }, 3000);
+}
+
+
+UI.prototype.clearFields = function () {
     document.getElementById('title').value = '';
     document.getElementById('author').value = '';
     document.getElementById('isbn').value = '';
 }
 
+
+
+
 // Event Listeners
-document.getElementById('book-form').addEventListener('submit', 
-function(e){
-    // Get form values
-    const title = document.getElementById('title').value,
-          author = document.getElementById('author').value,
-          isbn = document.getElementById('isbn').value;
-    
-    // Upon submitting, instantiate a book object
-    const book = new Book(title, author, isbn);
+document.getElementById('book-form').addEventListener('submit',
+    function (e) {
+        // Get form values
+        const title = document.getElementById('title').value,
+            author = document.getElementById('author').value,
+            isbn = document.getElementById('isbn').value;
 
-    // Instantiate a UI Object
-    const ui = new UI();
+        // Upon submitting, instantiate a book object
+        const book = new Book(title, author, isbn);
 
-    // Add book to list
-    ui.addBookToList(book);
+        // Instantiate a UI Object
+        const ui = new UI();
 
-    // Clear fields
-    ui.clearFields();
+        // Validate
+        if (title === '' || author === '' || isbn === '') {
+            // Error elert
+            ui.showAlert('Please fill in all fields', 'error');
+        } else {
+            // Add book to list
+            ui.addBookToList(book);
 
-    e.preventDefault();
-});
+            // Clear fields
+            ui.clearFields();
+        }
+
+
+
+        e.preventDefault();
+    });

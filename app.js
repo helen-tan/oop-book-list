@@ -57,7 +57,6 @@ UI.prototype.clearFields = function () {
 
 
 
-
 // Event Listeners
 document.getElementById('book-form').addEventListener('submit',
     function (e) {
@@ -79,6 +78,9 @@ document.getElementById('book-form').addEventListener('submit',
         } else {
             // Add book to list
             ui.addBookToList(book);
+
+            // Show success message
+            ui.showAlert('Book Added!', 'success');
 
             // Clear fields
             ui.clearFields();

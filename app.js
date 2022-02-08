@@ -9,6 +9,7 @@ function Book(title, author, isbn) {
 function UI() {
 
 }
+
 // UI prototype methods 
 UI.prototype.addBookToList = function (book) {
     const list = document.getElementById('book-list');
@@ -26,7 +27,7 @@ UI.prototype.addBookToList = function (book) {
     console.log(row);
 }
 
-UI.prototype.showAlert = function(message, className){
+UI.prototype.showAlert = function (message, className) {
     // construct element
     // Create a div
     const div = document.createElement('div');
@@ -34,7 +35,7 @@ UI.prototype.showAlert = function(message, className){
     div.className = `alert ${className}`;
     // Add text
     div.appendChild(document.createTextNode(message));
-    
+
 
     // Insert into DOM
     // Get parent
@@ -43,9 +44,17 @@ UI.prototype.showAlert = function(message, className){
     // Insert alert
     container.insertBefore(div, form);
     // Disappear after 3 sec
-    setTimeout(function(){
+    setTimeout(function () {
         document.querySelector('.alert').remove();
     }, 3000);
+}
+
+UI.prototype.deleteBook = function(target) {
+    if (target.className === 'delete') {
+        if (confirm('Are you sure?')) {
+            target.parentElement.parentElement.remove();
+        }
+    }
 }
 
 
@@ -57,7 +66,7 @@ UI.prototype.clearFields = function () {
 
 
 
-// Event Listeners
+// Event Listener - Add Book
 document.getElementById('book-form').addEventListener('submit',
     function (e) {
         // Get form values
@@ -86,7 +95,19 @@ document.getElementById('book-form').addEventListener('submit',
             ui.clearFields();
         }
 
+        e.preventDefault();
+    });
 
+// Event Listener - Delete Book (Event Delegation)
+document.getElementById('book-list').addEventListener('click',  // Grab the parent
+    function (e) {
+        // instantiate UI Object
+        const ui = new UI();
+        // Delete Book
+        ui.deleteBook(e.target);
+
+        // Show message
+        ui.showAlert('Book Removed!', 'success');
 
         e.preventDefault();
     });

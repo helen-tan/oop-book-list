@@ -20,7 +20,7 @@ class UI {
                         `;
         // Add new row to table
         list.appendChild(row);
-        console.log(row)
+        //console.log(row)
 
     }
 
@@ -48,9 +48,7 @@ class UI {
 
     deleteBook(target) {
         if (target.className === 'delete') {
-            if (confirm('Are you sure?')) {
-                target.parentElement.parentElement.remove();
-            }
+            target.parentElement.parentElement.remove();
         }
     }
 
@@ -61,6 +59,55 @@ class UI {
     }
 
 }
+
+// Local storage class
+class Store {
+    static getBooks() {
+        let books;
+        if (localStorage.getItem('books') === null) {
+            books = [];
+        } else {
+            books = JSON.parse(localStorage.getItem('books'));
+        }
+        return books;
+    }
+
+    static displayBooks() {
+        const books = Store.getBooks();
+
+        books.forEach(function (book) {
+            const ui = new UI();
+
+            // Add book to UI
+            ui.addBookToList(book);
+        });
+    }
+
+    static addBook(book) {
+        const books = Store.getBooks();
+
+        books.push(book);
+
+        localStorage.setItem('books', JSON.stringify(books));
+
+    }
+
+    static removeBook(isbn) {
+        const books = Store.getBooks();
+
+        books.forEach(function (book, index) {
+            if (book.isbn === isbn) {
+                books.splice(index, 1);
+            }
+        });
+
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+}
+
+// DOM Load Event
+document.addEventListener('DOMContentLoaded', Store.displayBooks);
+
 
 // Event Listener - Add Book
 document.getElementById('book-form').addEventListener('submit',
@@ -84,6 +131,9 @@ document.getElementById('book-form').addEventListener('submit',
             // Add book to list
             ui.addBookToList(book);
 
+            // Add Book to Local Storage
+            Store.addBook(book); // We don't need to instatiate Store bcos addBook is a static method
+
             // Show success message
             ui.showAlert('Book Added!', 'success');
 
@@ -101,6 +151,9 @@ document.getElementById('book-list').addEventListener('click',  // Grab the pare
         const ui = new UI();
         // Delete Book
         ui.deleteBook(e.target);
+
+        // Delete from local storage
+        Store.removeBook(e.target.parentElement.previousElementSibling.textContent); // We want the isbn number
 
         // Show message
         ui.showAlert('Book Removed!', 'success');
